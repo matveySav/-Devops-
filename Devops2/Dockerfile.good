@@ -1,0 +1,11 @@
+FROM ubuntu:24.04
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y  python3
+
+RUN useradd -ms /bin/bash custom_user
+
+USER custom_user
+
+ENV password=/home/matveysav/labs/dockerTest/password
