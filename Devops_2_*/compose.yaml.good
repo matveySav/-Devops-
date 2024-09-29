@@ -2,6 +2,9 @@ services:
   web:
     build: .
     ports:
-      - "8000:5000"
+      - "127.0.0.1:8000:5000"
+    depends_on:
+      redis:
+        condition: service_started
   redis:
-    image: "redis:alpine"
+    image: "redis:7.4-alpine"
