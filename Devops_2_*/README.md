@@ -49,10 +49,15 @@ services:
 
 Меняем содержимое `compose.yaml`, вводим `docker compose up`, все опять работает, в начале контейнер с redis запускается первым, и завершается последним
 
+![image](https://github.com/user-attachments/assets/aaf8c4d5-e18d-43b8-bcbf-8637d73181ff)
+
+![image](https://github.com/user-attachments/assets/c591d8fa-2ead-4931-b36e-c3d6d0bbbc65)
+
+И конечно же сама страница все также работает
+
 ![image](https://github.com/user-attachments/assets/7f49268c-0876-412c-9077-e2439edc64b1)
 
-И конечно же сама страница все таа
-![image](https://github.com/user-attachments/assets/c591d8fa-2ead-4931-b36e-c3d6d0bbbc65)
+![image](https://github.com/user-attachments/assets/968e3bd6-b247-439d-a693-cc3d4906116c)
 
 
 ## Поднимаем 2 контейнера так, чтобы они не видели друг друга по сети
