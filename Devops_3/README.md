@@ -114,6 +114,12 @@ on:
 
 ![image](https://github.com/user-attachments/assets/621e989f-94d0-444e-a088-d7d0c2c6f995)
 
+С помощью `docker pull matveysav/my_app:latest` загружаю с докерхаба образ себе на комп. и проверяем работу
+
+![image](https://github.com/user-attachments/assets/360b73e9-c125-4e68-acea-721459e964c8)
+
+Как видим, все работает.
+
 ## Итоги
 
 В процессе выполнения лабораторной работы было определено 5 плохих практик по написанию CI/CD файла для Github Actions. Все они в дальнейшем были исправлены.
