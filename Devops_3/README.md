@@ -45,5 +45,75 @@ jobs:
 2. Отсутствие наименований шагов, без них сложнее сразу понять, за что отвечает тот или иной шаг. 
 3. jobs `Test` и `Build-deploy` выполняются параллельно, независимо друг от друга, что нелогично, поскольку если тесты не пройдены, то нет смысла деплоить приложение, а в данной реализации, образ создасться и загрузиться на докерхаб независимо были ли тесты пройдены успешно или нет.
 4. Тригерром workflow'а является `push` на любой ветке, таким образом, даже если мы будем иметь вторую ветку для фич, при пуше в нее изменений, наш проект задеплоиться еще раз с дефолтной ветки (т.е. просто лишнее действие).
-5. Отсутсвие кеширования, без него каждый раз придется подтягивать зависимости, такие как питон, докер, чего можно избежать, ускорив тем самым время выполнения workflow'a.
+5. Использование секретных данных в явном виде в `yml` файле, что, очевидно, небезопасно. Если кто-то получит доступ к нашему юзернейму и токену от докерхаба, то он сможет вносить изменения (в зависимости от того, какой токен), которые должны быть доступны только нам.
 
+### Демонстрация того, что workflow отработал и образ загрузился на докерхаб
+
+![image](https://github.com/user-attachments/assets/395ab8bf-8d15-44c8-b3aa-0e27697d4ceb)
+
+![image](https://github.com/user-attachments/assets/08a2805b-fb3b-41e1-9c9c-ef711f99febe)
+
+## Исправление плохих практик
+
+```
+name: CI/CD pipeline_good
+run-name: Building and deploying my app
+on: 
+  push:
+    branches:
+    - main
+    
+jobs:
+  Test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code 
+        uses: actions/checkout@v4
+      - name: Installing python on a runner server
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y python3
+      - name: Unit testing
+        run: python3 -m unittest test_app.py
+          
+  Build-deploy:
+    needs: Test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_NAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_NAME }}/my_app:latest
+```
+
+1. Здесь мы используем `runs-on: ubuntu-22.04`, что повышает стабильность.
+2. К каждому шагу добавили `name:`, код стал более читаем и понятен.
+3. В job `Build-deploy` указан `needs: Test`, теперь сначала будет выполняться `Test`, а потом `Build-deploy`
+4. Указан тригерром пуш на главной(main) ветке.
+```
+on: 
+  push:
+    branches:
+    - main
+```
+5. Вместо использования секретных данных напрямую, создадим секреты в настройке репозитория, и добавим их значения в yml файл через переменные.
+
+![image](https://github.com/user-attachments/assets/4239e6a6-74a3-4265-8fe4-afb32e0cf753)
+
+### Тестируем работу
+
+![image](https://github.com/user-attachments/assets/240c4e29-f2b8-4424-9e30-9f466c22717b)
+
+![image](https://github.com/user-attachments/assets/621e989f-94d0-444e-a088-d7d0c2c6f995)
+
+## Итоги
+
+В процессе выполнения лабораторной работы было определено 5 плохих практик по написанию CI/CD файла для Github Actions. Все они в дальнейшем были исправлены.
