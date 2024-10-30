@@ -11,3 +11,39 @@
 ## Плохие практики 
 
 В папке `.github/workflows` создадим файл `bad_practice.yml`.
+
+```
+name: CI/CD pipeline
+run-name: Building and deploying my app
+on: push
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y python3
+      - run: |
+          python3 -m unittest test_app.py
+          
+  Build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: matveysav
+          password: dckr_pat_tYz3r4y5OfcdAqYgINfsCvH_XLk
+      - uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: matveysav/my_app:latest
+```
+
+1. Использование `ubuntu-latest`, т.к. версия может меняться со временем, из=за чего может пострадать стабильность.
+2. Отсутствие наименований шагов, без них сложнее сразу понять, за что отвечает тот или иной шаг. 
+3. jobs `Test` и `Build-deploy` выполняются параллельно, независимо друг от друга, что нелогично, поскольку если тесты не пройдены, то нет смысла деплоить приложение, а в данной реализации, образ создасться и загрузиться на докерхаб независимо были ли тесты пройдены успешно или нет.
+4. Тригерром workflow'а является `push` на любой ветке, таким образом, даже если мы будем иметь вторую ветку для фич, при пуше в нее изменений, наш проект задеплоиться еще раз с дефолтной ветки (т.е. просто лишнее действие).
+5. Отсутсвие кеширования, без него каждый раз придется подтягивать зависимости, такие как питон, докер, чего можно избежать, ускорив тем самым время выполнения workflow'a.
+
