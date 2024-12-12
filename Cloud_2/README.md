@@ -22,4 +22,12 @@
 5. Ресурс **Microsoft.DataLakeAnalytics** соотв. сервису **Azure Data Lake Analytics**, сервис выполняет анализ Больших данных, размер который масштабируется без верхнего предела, оплата производится только во время выполнения аналитических вычислений.
 6. Ресурс **Microsoft.DataLakeStore** - это **Azure Data Lake Storage**, который по сам по себе не является отдельным сервисом, а предоставляет дополнительные возможности (связанные с лучшей безопасностью, масштабируемостью и уклоном в анализ больших данных) для `Azure Blob Storage` - решение объектного хранилища от Azure.
 7. Ресурс **Microsoft.sql** ссылается на **Azure SQL** - продукт включающий в себя 3 сервиса `Azure SQL Database` (PaaS сервис базы данных на основе движка Microsoft SQL),`Azure SQL Managed Instance` (почти то же, что и `Azure SQL Database`, но более гибкое решение для миграции в облако, в общем более совместимое решение с on-premises базами данных) и `SQL Server on Azure VM` (сервис выделяющий виртуалки под сервера баз данных).
-8. 
+8. **Microsoft.MachineLearningServices**
+9. **Microsoft.Search**
+10. **Microsoft.Network**
+11. **microsoft.operationalinsights**
+
+## Результат
+
+## Выводы
+
