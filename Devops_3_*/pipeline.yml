@@ -1,0 +1,43 @@
+name: CI/CD pipeline_good
+run-name: Building and deploying my app
+on: 
+  push:
+    branches:
+    - main
+    
+jobs:
+  Test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code 
+        uses: actions/checkout@v4
+      - name: Installing python on a runner server
+        uses: actions/setup-python@v5
+        with: 
+          python-version: '3.12'
+      - name: Unit testing
+        run: python3 -m unittest test_app.py
+          
+  Build-deploy:
+    needs: Test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+      - name: Accessing Doppler secrets
+        run: |
+          echo ${{ secrets.DOPPLER_TOKEN }} | doppler configure set token --scope /
+          echo "DOCKER_HUB_NAME=$(doppler secrets get DOCKER_HUB_NAME --plain)" >> $GITHUB_ENV
+          echo "DOCKER_HUB_TOKEN=$(doppler secrets get DOCKER_HUB_TOKEN --plain)" >> $GITHUB_ENV
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_HUB_NAME }}
+          password: ${{ env.DOCKER_HUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.DOCKER_HUB_NAME }}/my_app:latest
